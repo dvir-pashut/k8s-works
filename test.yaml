@@ -1,0 +1,161 @@
+apiVersion: v1
+data:
+  .dockerignore: |-
+    Dockerfile
+    .dockerignore
+    node_modules
+    npm-debug.log
+    README.md
+    .env.local
+    .next
+  .env.local.example: |-
+    MONGODB_URI="mongodb://root:example@localhost:27017"
+    RABBITMQ_URI="amqp://user:example@localhost"
+    LOG_LEVEL="info"
+    PERSISTENCE="true"
+  .gitignore: |
+    # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+    # dependencies
+    /node_modules
+    /.pnp
+    .pnp.js
+
+    # testing
+    /coverage
+
+    # next.js
+    /.next/
+    /out/
+
+    # production
+    /build
+
+    # misc
+    .DS_Store
+    *.pem
+
+    # debug
+    npm-debug.log*
+    yarn-debug.log*
+    yarn-error.log*
+
+    # local env files
+    .env.local
+    .env.development.local
+    .env.test.local
+    .env.production.local
+
+    # vercel
+    .vercel
+
+    # lock files
+    yarn.lock
+    package-lock.json
+  Dockerfile: "# Install dependencies only when needed\nFROM node:16-alpine AS deps\n#
+    Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
+    to understand why libc6-compat might be needed.\nRUN apk add --no-cache libc6-compat\nWORKDIR
+    /app\n# COPY package.json yarn.lock ./\n# RUN yarn install --frozen-lockfile\n\n#
+    If using npm with a `package-lock.json` comment out above and use below instead\nCOPY
+    package.json ./ \nRUN npm install\nRUN npm ci\n\n# Rebuild the source code only
+    when needed\nFROM node:16-alpine AS builder\nWORKDIR /app\nCOPY --from=deps /app/node_modules
+    ./node_modules\nCOPY . .\n\n# Next.js collects completely anonymous telemetry
+    data about general usage.\n# Learn more here: https://nextjs.org/telemetry\n#
+    Uncomment the following line in case you want to disable telemetry during the
+    build.\n# ENV NEXT_TELEMETRY_DISABLED 1\n\nRUN yarn build\n\n# Production image,
+    copy all the files and run next\nFROM node:16-alpine AS runner\nWORKDIR /app\n\nENV
+    NODE_ENV production\n# Uncomment the following line in case you want to disable
+    telemetry during runtime.\n# ENV NEXT_TELEMETRY_DISABLED 1\n\nRUN addgroup --system
+    --gid 1001 nodejs\nRUN adduser --system --uid 1001 nextjs\n\n# You only need to
+    copy next.config.js if you are NOT using the default configuration\n# COPY --from=builder
+    /app/next.config.js ./\nCOPY --from=builder /app/public ./public\nCOPY --from=builder
+    /app/package.json ./package.json\n\n# Automatically leverage output traces to
+    reduce image size \n# https://nextjs.org/docs/advanced-features/output-file-tracing\nCOPY
+    --from=builder --chown=nextjs:nodejs /app/.next/standalone ./\nCOPY --from=builder
+    --chown=nextjs:nodejs /app/.next/static ./.next/static\n\nUSER nextjs\n\nEXPOSE
+    3000\n\nENV PORT 3000\n\nCMD [\"node\", \"server.js\"]\n"
+  README.md: |
+    ## Using Docker
+
+    1. [Install Docker](https://docs.docker.com/get-docker/) on your machine.
+    1. Build your container: `docker build -t nextjs-docker .`.
+    1. Run your container: `docker run -p 3000:3000 nextjs-docker`.
+
+    You can view your images created with `docker images`.
+
+    ## Running Locally
+
+    First, run the development server:
+
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
+  app.json: |
+    {
+      "name": "nextjs",
+      "options": {
+        "allow-unauthenticated": true,
+        "memory": "256Mi",
+        "cpu": "1",
+        "port": 3000,
+        "http2": false
+      }
+    }
+  next.config.js: |
+    module.exports = {
+      experimental: {
+        outputStandalone: true,
+      },
+    }
+  package.json: |
+    {
+      "private": true,
+      "scripts": {
+        "dev": "next dev",
+        "build": "next build"
+      },
+      "dependencies": {
+        "@headlessui/react": "^1.5.0",
+        "@heroicons/react": "^1.0.5",
+        "amqplib": "^0.8.0",
+        "axios": "^0.26.0",
+        "daisyui": "^2.6.0",
+        "mongoose": "^6.2.4",
+        "next": "latest",
+        "pino": "^7.8.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+      },
+      "devDependencies": {
+        "autoprefixer": "^10.4.2",
+        "postcss": "^8.4.6",
+        "tailwindcss": "^3.0.23"
+      }
+    }
+  postcss.config.js: |
+    module.exports = {
+      plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+      },
+    }
+  tailwind.config.js: |
+    module.exports = {
+      content: [
+        "./pages/**/*.{js,ts,jsx,tsx}",
+        "./components/**/*.{js,ts,jsx,tsx}",
+      ],
+      theme: {
+        extend: {},
+      },
+      plugins: [require("daisyui")],
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-01-25T14:43:31Z"
+  name: to-delete
+  namespace: default
+  resourceVersion: "227784"
+  uid: 4124c2fc-c719-4baa-a40a-4a14e18f9fb6
