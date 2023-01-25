@@ -19,10 +19,10 @@ spec:
       - name: "demo-crm-1"
         image: "us-central1-docker.pkg.dev/task-1-375619/crm/nextjs-docker:latest"
         resources:
-        volumeMounts:
-          - name: foo
-            mountPath: "/etc/foo"
-            readOnly: true
+        # volumeMounts:
+        #   - name: foo
+        #     mountPath: "/etc/foo"
+        #     readOnly: true
         env:
         - name: MONGODB_URI
           valueFrom:
@@ -39,10 +39,10 @@ spec:
             configMapKeyRef: 
               name: mongo-stuff
               key: log_level
-      volumes:
-        - name: foo
-          configMap:
-            name: to-delete    
+      # volumes:
+      #   - name: foo
+      #     configMap:
+      #       name: to-delete    
 ---
 # apiVersion: "autoscaling/v2"
 # kind: "HorizontalPodAutoscaler"
