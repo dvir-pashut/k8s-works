@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-stuff
+data:
+  presistance: "true"
+  log_level: "info"
