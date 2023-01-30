@@ -19,6 +19,12 @@ spec:
       - name: "demo-crm-1"
         image: "us-central1-docker.pkg.dev/task-1-375619/crm/nextjs-docker:latest"
         resources:
+          requests:
+              memory: "32Mi"
+              cpu: "75m"
+          limits:
+            memory: "64Mi"
+            cpu: "150m"
         # volumeMounts:
         #   - name: foo
         #     mountPath: "/etc/foo"

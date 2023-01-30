@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-drop-db-cronjob
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodb-drop-db
+            image: mongo:6.0.3
+            env: 
+            - name: mongo_username
+              valueFrom:
+                secretKeyRef: 
+                  name: mysecret
+                  key: db-username
+            - name: mongo_password
+              valueFrom:
+                secretKeyRef: 
+                  name: mysecret
+                  key: db-password
+            command:
+            - bash
+            - "-c"
+            - |
+              mongosh --host mongo-mongodb-headless -u ${mongo_username} -p ${mongo_password} --eval "db.dropDatabase()"
+          restartPolicy: OnFailure
