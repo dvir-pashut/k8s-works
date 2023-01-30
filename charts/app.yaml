@@ -1,0 +1,67 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "task-1"
+  #namespace: "project"
+  labels:
+    app: "test-app"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "test-app"
+  template:
+    metadata:
+      labels:
+        app: "test-app"
+    spec:
+      containers:
+      - name: "demo-crm-1"
+        image: "us-central1-docker.pkg.dev/task-1-375619/crm/nextjs-docker:latest"
+        resources:
+        # volumeMounts:
+        #   - name: foo
+        #     mountPath: "/etc/foo"
+        #     readOnly: true
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef: 
+              name: mysecret
+              key: mongo-url
+        - name: PERSISTENCE
+          valueFrom:
+            configMapKeyRef: 
+              name: mongo-stuff
+              key: presistance
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef: 
+              name: mongo-stuff
+              key: log_level
+      # volumes:
+      #   - name: foo
+      #     configMap:
+      #       name: to-delete    
+---
+# apiVersion: "autoscaling/v2"
+# kind: "HorizontalPodAutoscaler"
+# metadata:
+#   name: "task-app-hpa-u8wo"
+#   namespace: "project"
+#   labels:
+#     app: "test-app"
+# spec:
+#   scaleTargetRef:
+#     kind: "Deployment"
+#     name: "task-app"
+#     apiVersion: "apps/v1"
+#   minReplicas: 1
+#   maxReplicas: 5
+#   metrics:
+#   - type: "Resource"
+#     resource:
+#       name: "cpu"
+#       target:
+#         type: "Utilization"
+#         averageUtilization: 80
