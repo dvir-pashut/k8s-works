@@ -15,15 +15,17 @@ autoscaling:
 
 #db settings
 mongodb:
-  rootUser: root
-  rootPassword: root
-  #base64
-  rootPassword64: cm9vdAo=
-  #to create other users and db.... list style
+  credentials:
+    rootUser: root
+    rootPassword: root
+    #to create other users and db.... list style
   usernames: []
   passwords: []
   databases: []
   replicaCount: 3
+
+cert-manager:
+  installCRDs: false
 
 
 cronjob:
@@ -33,7 +35,7 @@ ingress:
   enabled: true
   host: crm-dvir.ddns.net
   tls: 
-    enabled: true
+    enabled: true 
     email: "pashutdvir@gmail.com"
 
 resources: {

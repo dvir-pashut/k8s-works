@@ -21,11 +21,11 @@ spec:
         resources:
 {{toYaml .Values.resources | indent 12}}
         env:
-        - name: MONGODB_URI
-          valueFrom:
-            secretKeyRef: 
-              name: mysecret
-              key: mongo-url
+        # - name: MONGODB_URI
+        #   valueFrom:
+        #     secretKeyRef: 
+        #       name: mysecret
+        #       key: mongo-url
         - name: PERSISTENCE
           valueFrom:
             configMapKeyRef: 
@@ -36,17 +36,11 @@ spec:
             configMapKeyRef: 
               name: mongo-stuff
               key: log_level
-        - name: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGODB_URI
           valueFrom:
-            secretKeyRef: 
-              name: mysecret
-              key: db-username
-        - name: MONGO_INITDB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef: 
-              name: mysecret
-              key: db-password
-      
+            configMapKeyRef: 
+              name: mongo-stuff
+              key: mongo-url
 ---
 {{- if .Values.autoscaling.enabled }}
 apiVersion: "autoscaling/v2"

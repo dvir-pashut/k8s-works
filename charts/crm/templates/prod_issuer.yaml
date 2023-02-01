@@ -1,3 +1,4 @@
+{{- if .Values.ingress.tls.enabled }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -8,7 +9,7 @@ spec:
     # The ACME server URL
     server: https://acme-v02.api.letsencrypt.org/directory
     # Email address used for ACME registration
-    email: {{ .Values.ingress.host }}
+    email: {{ .Values.ingress.tls.email }}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt-prod
@@ -17,3 +18,4 @@ spec:
     - http01:
         ingress:
           class: nginx
+{{- end }}

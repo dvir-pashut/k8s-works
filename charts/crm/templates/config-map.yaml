@@ -5,3 +5,4 @@ metadata:
 data:
   presistance: "true"
   log_level: "info"
+  mongo-url: {{ printf "mongodb://%s:%s@%s-mongodb-headless" .Values.mongodb.credentials.rootUser .Values.mongodb.credentials.rootPassword $.Release.Name }}
